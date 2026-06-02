@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // --- GAYA DESAIN PINK MODERN & FUTURISTIK ---
 const styles = {
@@ -42,9 +42,6 @@ const styles = {
   assetSymbol: { fontWeight: "bold", color: "#333", fontSize: "16px" },
   assetNameMini: { fontSize: "12px", color: "#888" },
   assetBalance: { fontWeight: "900", color: "#ff1493", fontSize: "16px" },
-  historyRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", fontSize: "13px", color: "#555" },
-  historyAction: { fontWeight: "bold", color: "#333" },
-  historyTime: { color: "#aaa", fontSize: "11px" },
   
   poolCard: { backgroundColor: "#fff0f5", border: "1px solid #ffb6c1", borderRadius: "16px", padding: "16px", marginBottom: "16px", transition: "all 0.3s ease" },
   poolHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" },
@@ -72,11 +69,38 @@ const tokenList = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("Earn");
-  
   const [topToken, setTopToken] = useState(tokenList[0]);
   const [bottomToken, setBottomToken] = useState(tokenList[2]);
 
+  // LOGIKA MESIN DOMPET ASLI (WEB3)
   const [walletAddress, setWalletAddress] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Fungsi untuk memanggil dompet pengguna
+  const handleConnectWallet = async () => {
+    // 1. Cek apakah ada mesin Web3 (MetaMask/OKX) di browser
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        setIsConnecting(true);
+        // 2. Minta izin ke pengguna untuk menghubungkan akun
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        const account = accounts[0];
+        
+        // 3. Potong teks alamatnya agar rapi (Contoh: 0x123...ABCD)
+        const formattedAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
+        setWalletAddress(formattedAddress);
+      } catch (error) {
+        console.error("Koneksi dibatalkan", error);
+        alert("Gagal menghubungkan dompet. Pastikan kamu memberi izin di aplikasimu.");
+      } finally {
+        setIsConnecting(false);
+      }
+    } else {
+      // Jika dibuka di Chrome biasa yang tidak punya ekstensi Web3
+      alert("Dompet Web3 tidak ditemukan! Buka link website ini di dalam browser aplikasi MetaMask, OKX, atau Trust Wallet.");
+    }
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectingFor, setSelectingFor] = useState(null);
 
@@ -84,8 +108,6 @@ export default function App() {
     setTopToken(bottomToken);
     setBottomToken(topToken);
   };
-
-  const handleConnectWallet = () => setWalletAddress("0x71C...97d1");
 
   const openTokenModal = (side) => {
     setSelectingFor(side);
@@ -123,8 +145,13 @@ export default function App() {
             <span style={styles.logoText}>Arrow</span>
             <span style={styles.logoBadge}>ARC Testnet</span>
           </div>
-          <button style={walletAddress ? styles.connectedButton : styles.connectButton} className={walletAddress ? "" : "neon-button"} onClick={handleConnectWallet}>
-            {walletAddress ? `🟢 ${walletAddress}` : "Connect Wallet"}
+          <button 
+            style={walletAddress ? styles.connectedButton : styles.connectButton} 
+            className={walletAddress ? "" : "neon-button"} 
+            onClick={handleConnectWallet}
+            disabled={isConnecting}
+          >
+            {isConnecting ? "Connecting..." : (walletAddress ? `🟢 ${walletAddress}` : "Connect Wallet")}
           </button>
         </header>
 
@@ -158,7 +185,6 @@ export default function App() {
 
                 <div style={styles.sectionTitle}>Active Yield Pools</div>
 
-                {/* Pool 1: Arrow Standard */}
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
                     <div><span style={styles.poolIcons}>⚡/🌸</span><span style={styles.poolName}>Stake ARC, Earn ARROW</span></div>
@@ -168,12 +194,11 @@ export default function App() {
                     <div style={styles.poolStat}><span>Your Staked:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "5,000 ARC" : "0"}</span></div>
                     <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#ff1493", fontWeight: "900"}}>{walletAddress ? "142.50 ARROW" : "0"}</span></div>
                   </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px"}} className={walletAddress ? "neon-button" : ""}>
+                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
                     {walletAddress ? "Harvest & Stake" : "Connect Wallet"}
                   </button>
                 </div>
 
-                {/* Pool 2: Dbay Modern Vault */}
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
                     <div><span style={styles.poolIcons}>💠/⚡</span><span style={styles.poolName}>Dbay Modern Vault</span></div>
@@ -183,12 +208,11 @@ export default function App() {
                     <div style={styles.poolStat}><span>Your Staked:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "10,000 DBAY" : "0"}</span></div>
                     <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#ff1493", fontWeight: "900"}}>{walletAddress ? "3,400 ARC" : "0"}</span></div>
                   </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#333"}} className={walletAddress ? "neon-button" : ""}>
+                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#333"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
                     {walletAddress ? "Harvest & Stake" : "Connect Wallet"}
                   </button>
                 </div>
 
-                {/* Pool 3: ARROW-ETH LP Farm */}
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
                     <div><span style={styles.poolIcons}>🌸/🔵</span><span style={styles.poolName}>ARROW-ETH LP Farm</span></div>
@@ -198,12 +222,11 @@ export default function App() {
                     <div style={styles.poolStat}><span>Your LP Tokens:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "150 LP" : "0"}</span></div>
                     <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#8a2be2", fontWeight: "900"}}>{walletAddress ? "1,250 ARROW" : "0"}</span></div>
                   </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#8a2be2", boxShadow: "0 0 10px rgba(138, 43, 226, 0.5)"}} className={walletAddress ? "neon-button" : ""}>
+                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#8a2be2", boxShadow: "0 0 10px rgba(138, 43, 226, 0.5)"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
                     {walletAddress ? "Stake LP Tokens" : "Connect Wallet"}
                   </button>
                 </div>
 
-                {/* Pool 4: USDC Stable Vault */}
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
                     <div><span style={styles.poolIcons}>💵/⚡</span><span style={styles.poolName}>Stake USDC, Earn ARC</span></div>
@@ -213,7 +236,7 @@ export default function App() {
                     <div style={styles.poolStat}><span>Your Staked:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "500 USDC" : "0"}</span></div>
                     <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#20b2aa", fontWeight: "900"}}>{walletAddress ? "120 ARC" : "0"}</span></div>
                   </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#20b2aa", boxShadow: "0 0 10px rgba(32, 178, 170, 0.5)"}} className={walletAddress ? "neon-button" : ""}>
+                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#20b2aa", boxShadow: "0 0 10px rgba(32, 178, 170, 0.5)"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
                     {walletAddress ? "Harvest & Stake" : "Connect Wallet"}
                   </button>
                 </div>
@@ -294,7 +317,7 @@ export default function App() {
                   </div>
                   <div style={styles.balanceText}>Balance: {walletAddress ? "10,000" : "0.00"}</div>
                 </div>
-                <button style={styles.actionButton} className={walletAddress ? "neon-button" : ""}>
+                <button style={styles.actionButton} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
                   {walletAddress ? "Swap Now" : "Connect Wallet to Swap"}
                 </button>
               </>
@@ -312,7 +335,7 @@ export default function App() {
                   <div style={styles.inputLabel}>To Network</div>
                   <div style={styles.inputRow}><div style={styles.networkName}>⚡ Arc Testnet</div></div>
                 </div>
-                <button style={styles.actionButton} className={walletAddress ? "neon-button" : ""}>
+                <button style={styles.actionButton} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
                    {walletAddress ? "Bridge Funds" : "Connect Wallet"}
                 </button>
               </>
