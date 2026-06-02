@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React, { useState, useEffect } from "react";
 
-// TAUTAN LOGO KOIN (Bisa kamu ganti nanti kalau punya link logo sendiri)
-const arcLogo = "https://s2.coinmarketcap.com/static/img/coins/64x64/17208.png";
+// TAUTAN LOGO KOIN (Memanggil logo aslimu dari folder public)
+const arcLogo = "/Gradual-Arc-icon-43ee6ca5-45c5-404d-ac1b-f54f93c51f06-1761315436123.png";
 const usdcLogo = "https://cryptologos.cc/logos/usd-coin-usdc-logo.png";
 
 // --- GAYA DESAIN PINK MODERN & FUTURISTIK ---
