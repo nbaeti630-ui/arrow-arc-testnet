@@ -25,7 +25,7 @@ const styles = {
   inputField: { backgroundColor: "transparent", border: "none", color: "#333", fontSize: "32px", outline: "none", width: "60%", fontWeight: "bold" },
   networkName: { fontSize: "18px", fontWeight: "bold", color: "#333" },
   tokenButton: { display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#ffffff", border: "1px solid #ffb6c1", color: "#333", padding: "8px 16px", borderRadius: "20px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 2px 4px rgba(255, 182, 193, 0.1)" },
-  tokenIcon: { fontSize: "18px" },
+  tokenIcon: { display: "flex", alignItems: "center", justifyContent: "center", width: "18px" },
   balanceText: { color: "#c71585", fontSize: "12px", textAlign: "right", marginTop: "8px", fontWeight: "600" },
   arrowContainer: { display: "flex", justifyContent: "center", margin: "-10px 0", position: "relative", zIndex: 1 },
   arrowIcon: { backgroundColor: "#ff1493", color: "#ffffff", width: "36px", height: "36px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "10px", border: "4px solid #ffffff", cursor: "pointer", fontWeight: "bold", fontSize: "18px", boxShadow: "0 2px 8px rgba(255, 20, 147, 0.3)" },
@@ -45,7 +45,7 @@ const styles = {
   
   poolCard: { backgroundColor: "#fff0f5", border: "1px solid #ffb6c1", borderRadius: "16px", padding: "16px", marginBottom: "16px", transition: "all 0.3s ease" },
   poolHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" },
-  poolIcons: { fontSize: "20px", marginRight: "8px" },
+  poolIcons: { fontSize: "20px", marginRight: "8px", display: "flex", alignItems: "center", gap: "2px" },
   poolName: { fontWeight: "900", color: "#333", fontSize: "15px" },
   aprBadge: { backgroundColor: "#32cd32", color: "#fff", padding: "4px 8px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", boxShadow: "0 2px 4px rgba(50, 205, 50, 0.3)" },
   poolDetails: { display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#555", marginBottom: "12px" },
@@ -59,34 +59,30 @@ const styles = {
   tokenListItem: { display: "flex", alignItems: "center", gap: "15px", padding: "12px", borderRadius: "16px", cursor: "pointer", border: "1px solid transparent" }
 };
 
+// DAFTAR KOIN DENGAN LOGO USDC ASLI
 const tokenList = [
   { symbol: "ARC", icon: "⚡", name: "Arc Token" },
   { symbol: "ARROW", icon: "🌸", name: "Arrow Token" },
   { symbol: "DBAY", icon: "💠", name: "Dbay Modern" },
   { symbol: "ETH", icon: "🔵", name: "Ethereum" },
-  { symbol: "USDC", icon: "💵", name: "USD Coin" },
+  { symbol: "USDC", iconImg: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png", name: "USD Coin" },
 ];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("Earn");
   const [topToken, setTopToken] = useState(tokenList[0]);
-  const [bottomToken, setBottomToken] = useState(tokenList[2]);
+  const [bottomToken, setBottomToken] = useState(tokenList[4]); // Set USDC as default bottom
 
   // LOGIKA MESIN DOMPET ASLI (WEB3)
   const [walletAddress, setWalletAddress] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
-  // Fungsi untuk memanggil dompet pengguna
   const handleConnectWallet = async () => {
-    // 1. Cek apakah ada mesin Web3 (MetaMask/OKX) di browser
     if (typeof window.ethereum !== "undefined") {
       try {
         setIsConnecting(true);
-        // 2. Minta izin ke pengguna untuk menghubungkan akun
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         const account = accounts[0];
-        
-        // 3. Potong teks alamatnya agar rapi (Contoh: 0x123...ABCD)
         const formattedAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
         setWalletAddress(formattedAddress);
       } catch (error) {
@@ -96,7 +92,6 @@ export default function App() {
         setIsConnecting(false);
       }
     } else {
-      // Jika dibuka di Chrome biasa yang tidak punya ekstensi Web3
       alert("Dompet Web3 tidak ditemukan! Buka link website ini di dalam browser aplikasi MetaMask, OKX, atau Trust Wallet.");
     }
   };
@@ -229,7 +224,12 @@ export default function App() {
 
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
-                    <div><span style={styles.poolIcons}>💵/⚡</span><span style={styles.poolName}>Stake USDC, Earn ARC</span></div>
+                    <div style={{display: "flex", alignItems: "center"}}>
+                      <span style={styles.poolIcons}>
+                        <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" style={{width: "20px", height: "20px"}} alt="USDC"/> / ⚡
+                      </span>
+                      <span style={styles.poolName}>Stake USDC, Earn ARC</span>
+                    </div>
                     <div style={{...styles.aprBadge, backgroundColor: "#20b2aa", boxShadow: "0 2px 4px rgba(32, 178, 170, 0.3)"}}>85% APR</div>
                   </div>
                   <div style={styles.poolDetails}>
@@ -267,21 +267,23 @@ export default function App() {
                     <div style={styles.sectionTitle}>Your Assets</div>
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
-                        <span style={{ fontSize: "24px" }}>⚡</span>
+                        <span style={{ fontSize: "24px", display: "flex", justifyContent: "center", width: "24px" }}>⚡</span>
                         <div><div style={styles.assetSymbol}>ARC</div><div style={styles.assetNameMini}>Arc Token</div></div>
                       </div>
                       <div style={styles.assetBalance}>15,420.00</div>
                     </div>
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
-                        <span style={{ fontSize: "24px" }}>💠</span>
+                        <span style={{ fontSize: "24px", display: "flex", justifyContent: "center", width: "24px" }}>💠</span>
                         <div><div style={styles.assetSymbol}>DBAY</div><div style={styles.assetNameMini}>Dbay Modern</div></div>
                       </div>
                       <div style={styles.assetBalance}>10,000.00</div>
                     </div>
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
-                        <span style={{ fontSize: "24px" }}>💵</span>
+                        <span style={{ display: "flex", justifyContent: "center", width: "24px" }}>
+                          <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" style={{width: "24px", height: "24px"}} alt="USDC"/>
+                        </span>
                         <div><div style={styles.assetSymbol}>USDC</div><div style={styles.assetNameMini}>USD Coin</div></div>
                       </div>
                       <div style={styles.assetBalance}>500.00</div>
@@ -299,7 +301,10 @@ export default function App() {
                   <div style={styles.inputRow}>
                     <input type="number" placeholder="0" style={styles.inputField} />
                     <button style={styles.tokenButton} onClick={() => openTokenModal("top")}>
-                      <span style={styles.tokenIcon}>{topToken.icon}</span> {topToken.symbol} ⏷
+                      <span style={styles.tokenIcon}>
+                        {topToken.iconImg ? <img src={topToken.iconImg} style={{width: "18px", height: "18px"}} alt=""/> : topToken.icon}
+                      </span> 
+                      {topToken.symbol} ⏷
                     </button>
                   </div>
                   <div style={styles.balanceText}>Balance: {walletAddress ? "15,420" : "0.00"}</div>
@@ -312,7 +317,10 @@ export default function App() {
                   <div style={styles.inputRow}>
                     <input type="number" placeholder="0" style={styles.inputField} disabled />
                     <button style={styles.tokenButton} onClick={() => openTokenModal("bottom")}>
-                      <span style={styles.tokenIcon}>{bottomToken.icon}</span> {bottomToken.symbol} ⏷
+                      <span style={styles.tokenIcon}>
+                         {bottomToken.iconImg ? <img src={bottomToken.iconImg} style={{width: "18px", height: "18px"}} alt=""/> : bottomToken.icon}
+                      </span> 
+                      {bottomToken.symbol} ⏷
                     </button>
                   </div>
                   <div style={styles.balanceText}>Balance: {walletAddress ? "10,000" : "0.00"}</div>
@@ -354,7 +362,9 @@ export default function App() {
             <div style={styles.tokenListContainer}>
               {tokenList.map((token, index) => (
                 <div key={index} style={styles.tokenListItem} className="token-item" onClick={() => handleSelectToken(token)}>
-                  <span style={{ fontSize: "28px" }}>{token.icon}</span>
+                  <span style={{ fontSize: "28px", display: "flex", justifyContent: "center", width: "32px" }}>
+                    {token.iconImg ? <img src={token.iconImg} style={{width: "28px", height: "28px"}} alt=""/> : token.icon}
+                  </span>
                   <div>
                     <div style={{ fontWeight: "900", color: "#333", fontSize: "16px" }}>{token.symbol}</div>
                     <div style={{ fontSize: "12px", color: "#888" }}>{token.name}</div>
