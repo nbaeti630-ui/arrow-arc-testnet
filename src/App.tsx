@@ -7,7 +7,7 @@ const usdcLogo = "https://cryptologos.cc/logos/usd-coin-usdc-logo.png";
 // 🔥 MASUKKAN 3 ALAMAT SMART CONTRACT KAMU DI BAWAH INI 🔥
 const ARROW_ADDRESS = "0x13F6Fda0A753a46BBE170Afe73B1a0cA829E8798";
 const DBAY_ADDRESS = "0xDDf54044035eAE79151026849Ca45f2421c9019a";
-const USDC_ADDRESS = "0x4Ef97c897679Edfb807a3Cb60aB726B290ceAFd4";
+const USDC_ADDRESS = "0xF017010DE2e3E8eD894382F5Cd1FA75fd2fb8857";
 
 const styles = {
   container: { minHeight: "100vh", backgroundColor: "#fff0f5", color: "#333333", fontFamily: "system-ui, -apple-system, sans-serif", display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: "40px" },
