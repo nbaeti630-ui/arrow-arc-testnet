@@ -1,9 +1,14 @@
 // @ts-nocheck
 import React, { useState, useEffect } from "react";
 
-// TAUTAN LOGO KOIN (Memanggil logo aslimu dari folder public)
+// TAUTAN LOGO KOIN 
 const arcLogo = "/Gradual-Arc-icon-43ee6ca5-45c5-404d-ac1b-f54f93c51f06-1761315436123.png";
 const usdcLogo = "https://cryptologos.cc/logos/usd-coin-usdc-logo.png";
+
+// 🔥 MASUKKAN 3 ALAMAT SMART CONTRACT KAMU DI BAWAH INI 🔥
+const ARROW_ADDRESS = "0x13F6Fda0A753a46BBE170Afe73B1a0cA829E8798";
+const DBAY_ADDRESS = "0xDDf54044035eAE79151026849Ca45f2421c9019a";
+const USDC_ADDRESS = "0x4Ef97c897679Edfb807a3Cb60aB726B290ceAFd4";
 
 // --- GAYA DESAIN PINK MODERN & FUTURISTIK ---
 const styles = {
@@ -23,62 +28,40 @@ const styles = {
   cardHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" },
   cardTitle: { margin: 0, fontSize: "20px", color: "#333", fontWeight: "900" },
   settingsIcon: { cursor: "pointer", fontSize: "20px" },
-  inputBox: { backgroundColor: "#fff0f5", borderRadius: "16px", padding: "16px", border: "1px solid #ffe4e1" },
-  inputLabel: { color: "#b03060", fontSize: "14px", marginBottom: "10px", fontWeight: "600" },
-  inputRow: { display: "flex", justifyContent: "space-between", alignItems: "center" },
-  inputField: { backgroundColor: "transparent", border: "none", color: "#333", fontSize: "32px", outline: "none", width: "60%", fontWeight: "bold" },
-  networkName: { fontSize: "18px", fontWeight: "bold", color: "#333", display: "flex", alignItems: "center" },
-  tokenButton: { display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#ffffff", border: "1px solid #ffb6c1", color: "#333", padding: "8px 16px", borderRadius: "20px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 2px 4px rgba(255, 182, 193, 0.1)" },
-  tokenIcon: { display: "flex", alignItems: "center", justifyContent: "center", width: "18px" },
-  balanceText: { color: "#c71585", fontSize: "12px", textAlign: "right", marginTop: "8px", fontWeight: "600" },
-  arrowContainer: { display: "flex", justifyContent: "center", margin: "-10px 0", position: "relative", zIndex: 1 },
-  arrowIcon: { backgroundColor: "#ff1493", color: "#ffffff", width: "36px", height: "36px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "10px", border: "4px solid #ffffff", cursor: "pointer", fontWeight: "bold", fontSize: "18px", boxShadow: "0 2px 8px rgba(255, 20, 147, 0.3)" },
-  actionButton: { width: "100%", backgroundColor: "#ff1493", color: "#ffffff", padding: "16px", borderRadius: "16px", fontSize: "18px", fontWeight: "bold", marginTop: "20px", cursor: "pointer", border: "none" },
-  
-  statGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "24px" },
-  statBox: { backgroundColor: "#fff0f5", padding: "16px", borderRadius: "16px", border: "1px solid #ffb6c1", textAlign: "center", boxShadow: "inset 0 2px 4px rgba(255,255,255,0.5)" },
-  statLabel: { color: "#c71585", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px" },
-  statValue: { color: "#ff1493", fontSize: "22px", fontWeight: "900", marginTop: "8px" },
-  sectionTitle: { fontSize: "16px", fontWeight: "bold", color: "#333", marginBottom: "12px", marginTop: "24px", borderBottom: "2px solid #ffe4e1", paddingBottom: "8px" },
-  assetRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px dashed #ffe4e1" },
+  sectionTitle: { fontSize: "16px", fontWeight: "bold", color: "#333", marginBottom: "12px", marginTop: "10px", borderBottom: "2px solid #ffe4e1", paddingBottom: "8px" },
+  assetRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", backgroundColor: "#fff0f5", borderRadius: "12px", border: "1px solid #ff1493", marginBottom: "10px" },
   assetInfo: { display: "flex", alignItems: "center", gap: "12px" },
   assetSymbol: { fontWeight: "bold", color: "#333", fontSize: "16px" },
   assetNameMini: { fontSize: "12px", color: "#888" },
-  assetBalance: { fontWeight: "900", color: "#ff1493", fontSize: "16px" },
-  
-  poolCard: { backgroundColor: "#fff0f5", border: "1px solid #ffb6c1", borderRadius: "16px", padding: "16px", marginBottom: "16px", transition: "all 0.3s ease" },
-  poolHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" },
-  poolIcons: { fontSize: "20px", marginRight: "8px", display: "flex", alignItems: "center", gap: "4px" },
-  poolName: { fontWeight: "900", color: "#333", fontSize: "15px" },
-  aprBadge: { backgroundColor: "#32cd32", color: "#fff", padding: "4px 8px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", boxShadow: "0 2px 4px rgba(50, 205, 50, 0.3)" },
-  poolDetails: { display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#555", marginBottom: "12px" },
-  poolStat: { display: "flex", flexDirection: "column", gap: "4px" },
-
-  modalOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(255, 182, 193, 0.4)", backdropFilter: "blur(4px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 },
-  modalContent: { backgroundColor: "#ffffff", width: "90%", maxWidth: "400px", borderRadius: "24px", padding: "20px", boxShadow: "0 10px 50px rgba(255, 20, 147, 0.3)", border: "1px solid #ffb6c1" },
-  modalHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" },
-  closeButton: { background: "none", border: "none", fontSize: "20px", fontWeight: "bold", color: "#ff1493", cursor: "pointer" },
-  tokenListContainer: { display: "flex", flexDirection: "column", gap: "10px", maxHeight: "300px", overflowY: "auto" },
-  tokenListItem: { display: "flex", alignItems: "center", gap: "15px", padding: "12px", borderRadius: "16px", cursor: "pointer", border: "1px solid transparent" }
+  assetBalance: { fontWeight: "900", color: "#ff1493", fontSize: "20px" },
+  faucetButton: { backgroundColor: "#32cd32", color: "#ffffff", border: "none", padding: "8px 12px", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "12px", boxShadow: "0 2px 4px rgba(50, 205, 50, 0.3)", marginLeft: "8px" },
 };
 
-// DAFTAR KOIN DENGAN LOGO ASLI
-const tokenList = [
-  { symbol: "ARC", iconImg: arcLogo, name: "Arc Token" },
-  { symbol: "ARROW", icon: "🌸", name: "Arrow Token" },
-  { symbol: "DBAY", icon: "💠", name: "Dbay Modern" },
-  { symbol: "ETH", icon: "🔵", name: "Ethereum" },
-  { symbol: "USDC", iconImg: usdcLogo, name: "USD Coin" },
-];
-
 export default function App() {
-  const [activeTab, setActiveTab] = useState("Earn");
-  const [topToken, setTopToken] = useState(tokenList[0]); // ARC
-  const [bottomToken, setBottomToken] = useState(tokenList[1]); // ARROW
-
-  // LOGIKA MESIN DOMPET ASLI (WEB3)
+  const [activeTab, setActiveTab] = useState("Dashboard");
   const [walletAddress, setWalletAddress] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
+  
+  // STATE SALDO ASLI DARI BLOCKCHAIN
+  const [balances, setBalances] = useState({ ARC: "0.00", ARROW: "0.00", DBAY: "0.00", USDC: "0.00" });
+  const [isClaiming, setIsClaiming] = useState(false);
+
+  // Fungsi Penerjemah Bahasa Blockchain
+  const fetchTokenBalance = async (tokenAddress, wallet) => {
+    if (!tokenAddress.startsWith("0x")) return "0.00";
+    try {
+      // 0x70a08231 adalah bahasa mesin untuk mengecek saldo
+      const data = "0x70a08231" + "000000000000000000000000" + wallet.substring(2);
+      const balanceHex = await window.ethereum.request({
+        method: "eth_call",
+        params: [{ to: tokenAddress, data: data }, "latest"]
+      });
+      const rawBalance = parseInt(balanceHex, 16);
+      return isNaN(rawBalance) ? "0.00" : (rawBalance / (10 ** 18)).toLocaleString();
+    } catch (e) {
+      return "0.00";
+    }
+  };
 
   const handleConnectWallet = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -86,36 +69,55 @@ export default function App() {
         setIsConnecting(true);
         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
         const account = accounts[0];
-        const formattedAddress = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-        setWalletAddress(formattedAddress);
+        setWalletAddress(`${account.substring(0, 6)}...${account.substring(account.length - 4)}`);
+
+        // 1. Baca Saldo ARC (Native)
+        const arcHex = await window.ethereum.request({ method: "eth_getBalance", params: [account, "latest"] });
+        const arcBal = (parseInt(arcHex, 16) / (10 ** 18)).toFixed(4);
+
+        // 2. Baca Saldo 3 Token Custom (ARROW, DBAY, USDC)
+        const arrowBal = await fetchTokenBalance(ARROW_ADDRESS, account);
+        const dbayBal = await fetchTokenBalance(DBAY_ADDRESS, account);
+        const usdcBal = await fetchTokenBalance(USDC_ADDRESS, account);
+
+        setBalances({ ARC: arcBal, ARROW: arrowBal, DBAY: dbayBal, USDC: usdcBal });
       } catch (error) {
-        console.error("Koneksi dibatalkan", error);
-        alert("Gagal menghubungkan dompet. Pastikan kamu memberi izin di aplikasimu.");
+        console.error(error);
+        alert("Koneksi gagal bosku.");
       } finally {
         setIsConnecting(false);
       }
     } else {
-      alert("Dompet Web3 tidak ditemukan! Buka link website ini di dalam browser aplikasi MetaMask, OKX, atau Trust Wallet.");
+      alert("Buka di browser dompet MetaMask/OKX Wallet kamu ya!");
     }
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectingFor, setSelectingFor] = useState(null);
-
-  const handleFlipTokens = () => {
-    setTopToken(bottomToken);
-    setBottomToken(topToken);
-  };
-
-  const openTokenModal = (side) => {
-    setSelectingFor(side);
-    setIsModalOpen(true);
-  };
-
-  const handleSelectToken = (token) => {
-    if (selectingFor === "top") setTopToken(token);
-    else setBottomToken(token);
-    setIsModalOpen(false);
+  // FUNGSI EKSEKUSI FAUCET 1.000 USDC
+  const handleClaimFaucet = async () => {
+    if (!walletAddress) return alert("Connect Wallet dulu bosku!");
+    if (!USDC_ADDRESS.startsWith("0x")) return alert("Alamat USDC belum dipasang di kodingan!");
+    
+    try {
+      setIsClaiming(true);
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+      
+      // 0xbe6d055a adalah sandi rahasia untuk fungsi claimFaucet() di Smart Contract-mu
+      await window.ethereum.request({
+        method: "eth_sendTransaction",
+        params: [{
+          from: accounts[0],
+          to: USDC_ADDRESS,
+          data: "0xbe6d055a"
+        }]
+      });
+      
+      alert("Transaksi Faucet sukses meluncur ke Blockchain! Tunggu sekitar 5 detik lalu klik 'Connect Wallet' lagi untuk me-refresh saldo.");
+    } catch (error) {
+      console.error(error);
+      alert("Kamu membatalkan transaksi Faucet.");
+    } finally {
+      setIsClaiming(false);
+    }
   };
 
   return (
@@ -126,14 +128,6 @@ export default function App() {
         .blinking-dot { animation: blinkAnim 1.2s infinite ease-in-out; }
         .neon-button { animation: neonPulse 2s infinite ease-in-out; transition: all 0.3s ease; }
         .neon-button:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .flip-arrow { transition: transform 0.3s ease; }
-        .flip-arrow:active { transform: rotate(180deg); }
-        .token-item { transition: all 0.2s ease; }
-        .token-item:hover { background-color: #fff0f5; transform: translateX(5px); }
-        .pool-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(255, 105, 180, 0.15); border-color: #ff69b4; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #ffb6c1; border-radius: 10px; }
       `}</style>
       
       <div style={styles.container}>
@@ -149,7 +143,7 @@ export default function App() {
             onClick={handleConnectWallet}
             disabled={isConnecting}
           >
-            {isConnecting ? "Connecting..." : (walletAddress ? `🟢 ${walletAddress}` : "Connect Wallet")}
+            {isConnecting ? "Menghubungkan..." : (walletAddress ? `🟢 ${walletAddress}` : "Connect Wallet")}
           </button>
         </header>
 
@@ -157,247 +151,79 @@ export default function App() {
           <div style={activeTab === "Dashboard" ? styles.activeTab : styles.inactiveTab} onClick={() => setActiveTab("Dashboard")}>Dashboard</div>
           <div style={activeTab === "Swap" ? styles.activeTab : styles.inactiveTab} onClick={() => setActiveTab("Swap")}>Swap</div>
           <div style={activeTab === "Earn" ? styles.activeTab : styles.inactiveTab} onClick={() => setActiveTab("Earn")}>Earn</div>
-          <div style={activeTab === "Bridge" ? styles.activeTab : styles.inactiveTab} onClick={() => setActiveTab("Bridge")}>Bridge</div>
         </div>
 
         <main style={styles.mainArea}>
           <div style={styles.card}>
             <div style={styles.cardHeader}>
               <h2 style={styles.cardTitle}>{activeTab}</h2>
-              {activeTab !== "Dashboard" && <span style={styles.settingsIcon}>⚙️</span>}
             </div>
 
-            {/* --- HALAMAN STAKING / EARN --- */}
-            {activeTab === "Earn" && (
-              <>
-                <div style={styles.statGrid}>
-                  <div style={styles.statBox}>
-                    <div style={styles.statLabel}>Total Staked</div>
-                    <div style={styles.statValue}>$1.32M</div>
-                  </div>
-                  <div style={styles.statBox}>
-                    <div style={styles.statLabel}>My Rewards</div>
-                    <div style={styles.statValue}>{walletAddress ? "$42.40" : "$0.00"}</div>
-                  </div>
-                </div>
-
-                <div style={styles.sectionTitle}>Active Yield Pools</div>
-
-                <div style={styles.poolCard} className="pool-card">
-                  <div style={styles.poolHeader}>
-                    <div style={{display: "flex", alignItems: "center"}}>
-                      <span style={styles.poolIcons}>
-                        <img src={arcLogo} style={{width: "20px", height: "20px"}} alt="ARC"/> / 🌸
-                      </span>
-                      <span style={styles.poolName}>Stake ARC, Earn ARROW</span>
-                    </div>
-                    <div style={styles.aprBadge}>120% APR</div>
-                  </div>
-                  <div style={styles.poolDetails}>
-                    <div style={styles.poolStat}><span>Your Staked:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "5,000 ARC" : "0"}</span></div>
-                    <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#ff1493", fontWeight: "900"}}>{walletAddress ? "142.50 ARROW" : "0"}</span></div>
-                  </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
-                    {walletAddress ? "Harvest & Stake" : "Connect Wallet"}
-                  </button>
-                </div>
-
-                <div style={styles.poolCard} className="pool-card">
-                  <div style={styles.poolHeader}>
-                    <div style={{display: "flex", alignItems: "center"}}>
-                      <span style={styles.poolIcons}>
-                        💠 / <img src={arcLogo} style={{width: "20px", height: "20px"}} alt="ARC"/>
-                      </span>
-                      <span style={styles.poolName}>Dbay Modern Vault</span>
-                    </div>
-                    <div style={{...styles.aprBadge, backgroundColor: "#ff1493", boxShadow: "0 2px 4px rgba(255, 20, 147, 0.3)"}}>250% APR</div>
-                  </div>
-                  <div style={styles.poolDetails}>
-                    <div style={styles.poolStat}><span>Your Staked:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "10,000 DBAY" : "0"}</span></div>
-                    <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#ff1493", fontWeight: "900"}}>{walletAddress ? "3,400 ARC" : "0"}</span></div>
-                  </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#333"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
-                    {walletAddress ? "Harvest & Stake" : "Connect Wallet"}
-                  </button>
-                </div>
-
-                <div style={styles.poolCard} className="pool-card">
-                  <div style={styles.poolHeader}>
-                    <div style={{display: "flex", alignItems: "center"}}>
-                      <span style={styles.poolIcons}>🌸 / 🔵</span>
-                      <span style={styles.poolName}>ARROW-ETH LP Farm</span>
-                    </div>
-                    <div style={{...styles.aprBadge, backgroundColor: "#8a2be2"}}>450% APR</div>
-                  </div>
-                  <div style={styles.poolDetails}>
-                    <div style={styles.poolStat}><span>Your LP Tokens:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "150 LP" : "0"}</span></div>
-                    <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#8a2be2", fontWeight: "900"}}>{walletAddress ? "1,250 ARROW" : "0"}</span></div>
-                  </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#8a2be2", boxShadow: "0 0 10px rgba(138, 43, 226, 0.5)"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
-                    {walletAddress ? "Stake LP Tokens" : "Connect Wallet"}
-                  </button>
-                </div>
-
-                <div style={styles.poolCard} className="pool-card">
-                  <div style={styles.poolHeader}>
-                    <div style={{display: "flex", alignItems: "center"}}>
-                      <span style={styles.poolIcons}>
-                        <img src={usdcLogo} style={{width: "20px", height: "20px"}} alt="USDC"/> / <img src={arcLogo} style={{width: "20px", height: "20px"}} alt="ARC"/>
-                      </span>
-                      <span style={styles.poolName}>Stake USDC, Earn ARC</span>
-                    </div>
-                    <div style={{...styles.aprBadge, backgroundColor: "#20b2aa", boxShadow: "0 2px 4px rgba(32, 178, 170, 0.3)"}}>85% APR</div>
-                  </div>
-                  <div style={styles.poolDetails}>
-                    <div style={styles.poolStat}><span>Your Staked:</span> <span style={{fontWeight: "bold"}}>{walletAddress ? "500 USDC" : "0"}</span></div>
-                    <div style={styles.poolStat}><span style={{textAlign: "right"}}>Earned:</span> <span style={{color: "#20b2aa", fontWeight: "900"}}>{walletAddress ? "120 ARC" : "0"}</span></div>
-                  </div>
-                  <button style={{...styles.actionButton, padding: "10px", fontSize: "14px", marginTop: "5px", backgroundColor: "#20b2aa", boxShadow: "0 0 10px rgba(32, 178, 170, 0.5)"}} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
-                    {walletAddress ? "Harvest & Stake" : "Connect Wallet"}
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* --- HALAMAN DASHBOARD --- */}
             {activeTab === "Dashboard" && (
               <>
-                 <div style={styles.statGrid}>
-                  <div style={styles.statBox}>
-                    <div style={styles.statLabel}>Platform TVL</div>
-                    <div style={styles.statValue}>$1.32M</div>
-                  </div>
-                  <div style={styles.statBox}>
-                    <div style={styles.statLabel}>24h Volume</div>
-                    <div style={styles.statValue}>$342K</div>
-                  </div>
-                </div>
-
                 {!walletAddress ? (
                   <div style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>
                     <div style={{ fontSize: "40px", marginBottom: "10px" }}>🔒</div>
-                    <p>Connect your wallet to view your assets.</p>
+                    <p>Connect dompetmu untuk melihat saldo <b>Asli</b> dari Blockchain.</p>
                   </div>
                 ) : (
                   <>
-                    <div style={styles.sectionTitle}>Your Assets</div>
+                    <div style={styles.sectionTitle}>Real-Time Assets</div>
+                    
+                    {/* BARIS SALDO ARC */}
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
-                        <span style={{ display: "flex", justifyContent: "center", width: "24px" }}>
-                          <img src={arcLogo} style={{width: "24px", height: "24px"}} alt="ARC"/>
-                        </span>
-                        <div><div style={styles.assetSymbol}>ARC</div><div style={styles.assetNameMini}>Arc Token</div></div>
+                        <span style={{ display: "flex", justifyContent: "center", width: "24px" }}><img src={arcLogo} style={{width: "24px", height: "24px"}} alt="ARC"/></span>
+                        <div><div style={styles.assetSymbol}>ARC</div><div style={styles.assetNameMini}>Native Token</div></div>
                       </div>
-                      <div style={styles.assetBalance}>15,420.00</div>
+                      <div style={styles.assetBalance}>{balances.ARC}</div>
                     </div>
+
+                    {/* BARIS SALDO DBAY */}
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
                         <span style={{ fontSize: "24px", display: "flex", justifyContent: "center", width: "24px" }}>💠</span>
                         <div><div style={styles.assetSymbol}>DBAY</div><div style={styles.assetNameMini}>Dbay Modern</div></div>
                       </div>
-                      <div style={styles.assetBalance}>10,000.00</div>
+                      <div style={styles.assetBalance}>{balances.DBAY}</div>
                     </div>
+
+                    {/* BARIS SALDO ARROW */}
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
-                        <span style={{ display: "flex", justifyContent: "center", width: "24px" }}>
-                          <img src={usdcLogo} style={{width: "24px", height: "24px"}} alt="USDC"/>
-                        </span>
-                        <div><div style={styles.assetSymbol}>USDC</div><div style={styles.assetNameMini}>USD Coin</div></div>
+                        <span style={{ fontSize: "24px", display: "flex", justifyContent: "center", width: "24px" }}>🌸</span>
+                        <div><div style={styles.assetSymbol}>ARROW</div><div style={styles.assetNameMini}>Arrow Token</div></div>
                       </div>
-                      <div style={styles.assetBalance}>500.00</div>
+                      <div style={styles.assetBalance}>{balances.ARROW}</div>
+                    </div>
+
+                    {/* BARIS SALDO USDC + TOMBOL FAUCET */}
+                    <div style={{...styles.assetRow, borderColor: "#32cd32"}}>
+                      <div style={styles.assetInfo}>
+                        <span style={{ display: "flex", justifyContent: "center", width: "24px" }}><img src={usdcLogo} style={{width: "24px", height: "24px"}} alt="USDC"/></span>
+                        <div><div style={styles.assetSymbol}>USDC</div><div style={styles.assetNameMini}>Testnet USD</div></div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={styles.assetBalance}>{balances.USDC}</div>
+                        <button style={styles.faucetButton} onClick={handleClaimFaucet} disabled={isClaiming}>
+                          {isClaiming ? "⏳..." : "+ Claim"}
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}
               </>
             )}
 
-            {/* --- HALAMAN SWAP --- */}
             {activeTab === "Swap" && (
-              <>
-                <div style={styles.inputBox}>
-                  <div style={styles.inputLabel}>You pay</div>
-                  <div style={styles.inputRow}>
-                    <input type="number" placeholder="0" style={styles.inputField} />
-                    <button style={styles.tokenButton} onClick={() => openTokenModal("top")}>
-                      <span style={styles.tokenIcon}>
-                        {topToken.iconImg ? <img src={topToken.iconImg} style={{width: "18px", height: "18px"}} alt=""/> : topToken.icon}
-                      </span> 
-                      {topToken.symbol} ⏷
-                    </button>
-                  </div>
-                  <div style={styles.balanceText}>Balance: {walletAddress ? "15,420" : "0.00"}</div>
-                </div>
-                <div style={styles.arrowContainer}>
-                  <div style={styles.arrowIcon} className="flip-arrow" onClick={handleFlipTokens}>↓</div>
-                </div>
-                <div style={styles.inputBox}>
-                  <div style={styles.inputLabel}>You receive</div>
-                  <div style={styles.inputRow}>
-                    <input type="number" placeholder="0" style={styles.inputField} disabled />
-                    <button style={styles.tokenButton} onClick={() => openTokenModal("bottom")}>
-                      <span style={styles.tokenIcon}>
-                         {bottomToken.iconImg ? <img src={bottomToken.iconImg} style={{width: "18px", height: "18px"}} alt=""/> : bottomToken.icon}
-                      </span> 
-                      {bottomToken.symbol} ⏷
-                    </button>
-                  </div>
-                  <div style={styles.balanceText}>Balance: {walletAddress ? "10,000" : "0.00"}</div>
-                </div>
-                <button style={styles.actionButton} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
-                  {walletAddress ? "Swap Now" : "Connect Wallet to Swap"}
-                </button>
-              </>
+               <div style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>Fitur Swap sedang antre untuk dihubungkan ke Smart Contract...</div>
             )}
-
-            {/* --- HALAMAN BRIDGE --- */}
-            {activeTab === "Bridge" && (
-              <>
-                 <div style={styles.inputBox}>
-                  <div style={styles.inputLabel}>From Network</div>
-                  <div style={styles.inputRow}><div style={styles.networkName}>🌐 Ethereum Mainnet</div></div>
-                </div>
-                <div style={styles.arrowContainer}><div style={styles.arrowIcon}>↓</div></div>
-                <div style={styles.inputBox}>
-                  <div style={styles.inputLabel}>To Network</div>
-                  <div style={styles.inputRow}>
-                    <div style={styles.networkName}>
-                      <img src={arcLogo} style={{width: "20px", height: "20px", marginRight: "6px"}} alt=""/> 
-                      Arc Testnet
-                    </div>
-                  </div>
-                </div>
-                <button style={styles.actionButton} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
-                   {walletAddress ? "Bridge Funds" : "Connect Wallet"}
-                </button>
-              </>
+             {activeTab === "Earn" && (
+               <div style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>Fitur Staking sedang antre untuk dihubungkan ke Smart Contract...</div>
             )}
           </div>
         </main>
       </div>
-
-      {isModalOpen && (
-        <div style={styles.modalOverlay}>
-          <div style={styles.modalContent}>
-            <div style={styles.modalHeader}>
-              <h3 style={{ margin: 0, color: "#333", fontWeight: "900" }}>Select a token</h3>
-              <button style={styles.closeButton} onClick={() => setIsModalOpen(false)}>✕</button>
-            </div>
-            <div style={styles.tokenListContainer}>
-              {tokenList.map((token, index) => (
-                <div key={index} style={styles.tokenListItem} className="token-item" onClick={() => handleSelectToken(token)}>
-                  <span style={{ fontSize: "28px", display: "flex", justifyContent: "center", width: "32px" }}>
-                    {token.iconImg ? <img src={token.iconImg} style={{width: "28px", height: "28px"}} alt=""/> : token.icon}
-                  </span>
-                  <div>
-                    <div style={{ fontWeight: "900", color: "#333", fontSize: "16px" }}>{token.symbol}</div>
-                    <div style={{ fontSize: "12px", color: "#888" }}>{token.name}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
