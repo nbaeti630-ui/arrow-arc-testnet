@@ -1,6 +1,10 @@
 // @ts-nocheck
 import React, { useState, useEffect } from "react";
 
+// TAUTAN LOGO KOIN (Bisa kamu ganti nanti kalau punya link logo sendiri)
+const arcLogo = "https://s2.coinmarketcap.com/static/img/coins/64x64/17208.png";
+const usdcLogo = "https://cryptologos.cc/logos/usd-coin-usdc-logo.png";
+
 // --- GAYA DESAIN PINK MODERN & FUTURISTIK ---
 const styles = {
   container: { minHeight: "100vh", backgroundColor: "#fff0f5", color: "#333333", fontFamily: "system-ui, -apple-system, sans-serif", display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: "40px" },
@@ -23,7 +27,7 @@ const styles = {
   inputLabel: { color: "#b03060", fontSize: "14px", marginBottom: "10px", fontWeight: "600" },
   inputRow: { display: "flex", justifyContent: "space-between", alignItems: "center" },
   inputField: { backgroundColor: "transparent", border: "none", color: "#333", fontSize: "32px", outline: "none", width: "60%", fontWeight: "bold" },
-  networkName: { fontSize: "18px", fontWeight: "bold", color: "#333" },
+  networkName: { fontSize: "18px", fontWeight: "bold", color: "#333", display: "flex", alignItems: "center" },
   tokenButton: { display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#ffffff", border: "1px solid #ffb6c1", color: "#333", padding: "8px 16px", borderRadius: "20px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 2px 4px rgba(255, 182, 193, 0.1)" },
   tokenIcon: { display: "flex", alignItems: "center", justifyContent: "center", width: "18px" },
   balanceText: { color: "#c71585", fontSize: "12px", textAlign: "right", marginTop: "8px", fontWeight: "600" },
@@ -31,7 +35,6 @@ const styles = {
   arrowIcon: { backgroundColor: "#ff1493", color: "#ffffff", width: "36px", height: "36px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "10px", border: "4px solid #ffffff", cursor: "pointer", fontWeight: "bold", fontSize: "18px", boxShadow: "0 2px 8px rgba(255, 20, 147, 0.3)" },
   actionButton: { width: "100%", backgroundColor: "#ff1493", color: "#ffffff", padding: "16px", borderRadius: "16px", fontSize: "18px", fontWeight: "bold", marginTop: "20px", cursor: "pointer", border: "none" },
   
-  // GAYA DASHBOARD & STAKING
   statGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "24px" },
   statBox: { backgroundColor: "#fff0f5", padding: "16px", borderRadius: "16px", border: "1px solid #ffb6c1", textAlign: "center", boxShadow: "inset 0 2px 4px rgba(255,255,255,0.5)" },
   statLabel: { color: "#c71585", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "1px" },
@@ -45,7 +48,7 @@ const styles = {
   
   poolCard: { backgroundColor: "#fff0f5", border: "1px solid #ffb6c1", borderRadius: "16px", padding: "16px", marginBottom: "16px", transition: "all 0.3s ease" },
   poolHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" },
-  poolIcons: { fontSize: "20px", marginRight: "8px", display: "flex", alignItems: "center", gap: "2px" },
+  poolIcons: { fontSize: "20px", marginRight: "8px", display: "flex", alignItems: "center", gap: "4px" },
   poolName: { fontWeight: "900", color: "#333", fontSize: "15px" },
   aprBadge: { backgroundColor: "#32cd32", color: "#fff", padding: "4px 8px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", boxShadow: "0 2px 4px rgba(50, 205, 50, 0.3)" },
   poolDetails: { display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#555", marginBottom: "12px" },
@@ -59,19 +62,19 @@ const styles = {
   tokenListItem: { display: "flex", alignItems: "center", gap: "15px", padding: "12px", borderRadius: "16px", cursor: "pointer", border: "1px solid transparent" }
 };
 
-// DAFTAR KOIN DENGAN LOGO USDC ASLI
+// DAFTAR KOIN DENGAN LOGO ASLI
 const tokenList = [
-  { symbol: "ARC", icon: "⚡", name: "Arc Token" },
+  { symbol: "ARC", iconImg: arcLogo, name: "Arc Token" },
   { symbol: "ARROW", icon: "🌸", name: "Arrow Token" },
   { symbol: "DBAY", icon: "💠", name: "Dbay Modern" },
   { symbol: "ETH", icon: "🔵", name: "Ethereum" },
-  { symbol: "USDC", iconImg: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png", name: "USD Coin" },
+  { symbol: "USDC", iconImg: usdcLogo, name: "USD Coin" },
 ];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("Earn");
-  const [topToken, setTopToken] = useState(tokenList[0]);
-  const [bottomToken, setBottomToken] = useState(tokenList[4]); // Set USDC as default bottom
+  const [topToken, setTopToken] = useState(tokenList[0]); // ARC
+  const [bottomToken, setBottomToken] = useState(tokenList[1]); // ARROW
 
   // LOGIKA MESIN DOMPET ASLI (WEB3)
   const [walletAddress, setWalletAddress] = useState(null);
@@ -182,7 +185,12 @@ export default function App() {
 
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
-                    <div><span style={styles.poolIcons}>⚡/🌸</span><span style={styles.poolName}>Stake ARC, Earn ARROW</span></div>
+                    <div style={{display: "flex", alignItems: "center"}}>
+                      <span style={styles.poolIcons}>
+                        <img src={arcLogo} style={{width: "20px", height: "20px"}} alt="ARC"/> / 🌸
+                      </span>
+                      <span style={styles.poolName}>Stake ARC, Earn ARROW</span>
+                    </div>
                     <div style={styles.aprBadge}>120% APR</div>
                   </div>
                   <div style={styles.poolDetails}>
@@ -196,7 +204,12 @@ export default function App() {
 
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
-                    <div><span style={styles.poolIcons}>💠/⚡</span><span style={styles.poolName}>Dbay Modern Vault</span></div>
+                    <div style={{display: "flex", alignItems: "center"}}>
+                      <span style={styles.poolIcons}>
+                        💠 / <img src={arcLogo} style={{width: "20px", height: "20px"}} alt="ARC"/>
+                      </span>
+                      <span style={styles.poolName}>Dbay Modern Vault</span>
+                    </div>
                     <div style={{...styles.aprBadge, backgroundColor: "#ff1493", boxShadow: "0 2px 4px rgba(255, 20, 147, 0.3)"}}>250% APR</div>
                   </div>
                   <div style={styles.poolDetails}>
@@ -210,7 +223,10 @@ export default function App() {
 
                 <div style={styles.poolCard} className="pool-card">
                   <div style={styles.poolHeader}>
-                    <div><span style={styles.poolIcons}>🌸/🔵</span><span style={styles.poolName}>ARROW-ETH LP Farm</span></div>
+                    <div style={{display: "flex", alignItems: "center"}}>
+                      <span style={styles.poolIcons}>🌸 / 🔵</span>
+                      <span style={styles.poolName}>ARROW-ETH LP Farm</span>
+                    </div>
                     <div style={{...styles.aprBadge, backgroundColor: "#8a2be2"}}>450% APR</div>
                   </div>
                   <div style={styles.poolDetails}>
@@ -226,7 +242,7 @@ export default function App() {
                   <div style={styles.poolHeader}>
                     <div style={{display: "flex", alignItems: "center"}}>
                       <span style={styles.poolIcons}>
-                        <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" style={{width: "20px", height: "20px"}} alt="USDC"/> / ⚡
+                        <img src={usdcLogo} style={{width: "20px", height: "20px"}} alt="USDC"/> / <img src={arcLogo} style={{width: "20px", height: "20px"}} alt="ARC"/>
                       </span>
                       <span style={styles.poolName}>Stake USDC, Earn ARC</span>
                     </div>
@@ -267,7 +283,9 @@ export default function App() {
                     <div style={styles.sectionTitle}>Your Assets</div>
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
-                        <span style={{ fontSize: "24px", display: "flex", justifyContent: "center", width: "24px" }}>⚡</span>
+                        <span style={{ display: "flex", justifyContent: "center", width: "24px" }}>
+                          <img src={arcLogo} style={{width: "24px", height: "24px"}} alt="ARC"/>
+                        </span>
                         <div><div style={styles.assetSymbol}>ARC</div><div style={styles.assetNameMini}>Arc Token</div></div>
                       </div>
                       <div style={styles.assetBalance}>15,420.00</div>
@@ -282,7 +300,7 @@ export default function App() {
                     <div style={styles.assetRow}>
                       <div style={styles.assetInfo}>
                         <span style={{ display: "flex", justifyContent: "center", width: "24px" }}>
-                          <img src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" style={{width: "24px", height: "24px"}} alt="USDC"/>
+                          <img src={usdcLogo} style={{width: "24px", height: "24px"}} alt="USDC"/>
                         </span>
                         <div><div style={styles.assetSymbol}>USDC</div><div style={styles.assetNameMini}>USD Coin</div></div>
                       </div>
@@ -341,7 +359,12 @@ export default function App() {
                 <div style={styles.arrowContainer}><div style={styles.arrowIcon}>↓</div></div>
                 <div style={styles.inputBox}>
                   <div style={styles.inputLabel}>To Network</div>
-                  <div style={styles.inputRow}><div style={styles.networkName}>⚡ Arc Testnet</div></div>
+                  <div style={styles.inputRow}>
+                    <div style={styles.networkName}>
+                      <img src={arcLogo} style={{width: "20px", height: "20px", marginRight: "6px"}} alt=""/> 
+                      Arc Testnet
+                    </div>
+                  </div>
                 </div>
                 <button style={styles.actionButton} className={walletAddress ? "neon-button" : ""} onClick={!walletAddress ? handleConnectWallet : undefined}>
                    {walletAddress ? "Bridge Funds" : "Connect Wallet"}
