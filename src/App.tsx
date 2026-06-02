@@ -26,27 +26,27 @@ const styles = {
   cardHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" },
   cardTitle: { margin: 0, fontSize: "20px", color: "#333", fontWeight: "900" },
   
-  // Gaya tambahan untuk Swap
-  inputBox: { backgroundColor: "#fff0f5", borderRadius: "16px", padding: "16px", border: "1px solid #ffe4e1", transition: "all 0.2s ease" },
-  inputLabel: { color: "#b03060", fontSize: "14px", marginBottom: "10px", fontWeight: "600" },
-  inputRow: { display: "flex", justifyContent: "space-between", alignItems: "center" },
-  inputField: { backgroundColor: "transparent", border: "none", color: "#333", fontSize: "28px", outline: "none", width: "60%", fontWeight: "bold" },
-  tokenButton: { display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#ffffff", border: "1px solid #ffb6c1", color: "#333", padding: "8px 16px", borderRadius: "20px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 2px 4px rgba(255, 182, 193, 0.1)" },
-  balanceText: { color: "#c71585", fontSize: "12px", textAlign: "right", marginTop: "8px", fontWeight: "600" },
-  arrowContainer: { display: "flex", justifyContent: "center", margin: "-10px 0", position: "relative", zIndex: 1 },
-  arrowIcon: { backgroundColor: "#ff1493", color: "#ffffff", width: "36px", height: "36px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "10px", border: "4px solid #ffffff", cursor: "pointer", fontWeight: "bold", fontSize: "18px", boxShadow: "0 2px 8px rgba(255, 20, 147, 0.3)" },
-  actionButton: { width: "100%", backgroundColor: "#ff1493", color: "#ffffff", padding: "16px", borderRadius: "16px", fontSize: "18px", fontWeight: "bold", marginTop: "20px", cursor: "pointer", border: "none" },
-  
-  // Dashboard & Faucet styles (dipersingkat)
+  // Dashboard Styles
   sectionTitle: { fontSize: "16px", fontWeight: "bold", color: "#333", marginBottom: "12px", marginTop: "10px", borderBottom: "2px solid #ffe4e1", paddingBottom: "8px" },
   assetRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", backgroundColor: "#fff0f5", borderRadius: "12px", border: "1px solid #ff1493", marginBottom: "10px" },
   assetInfo: { display: "flex", alignItems: "center", gap: "12px" },
   assetSymbol: { fontWeight: "bold", color: "#333", fontSize: "16px" },
   assetNameMini: { fontSize: "12px", color: "#888" },
   assetBalance: { fontWeight: "900", color: "#ff1493", fontSize: "20px" },
-  faucetButton: { backgroundColor: "#32cd32", color: "#ffffff", border: "none", padding: "8px 12px", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "12px" },
+  faucetButton: { backgroundColor: "#32cd32", color: "#ffffff", border: "none", padding: "8px 12px", borderRadius: "10px", fontWeight: "bold", cursor: "pointer", fontSize: "12px", boxShadow: "0 2px 4px rgba(50, 205, 50, 0.3)", marginLeft: "8px" },
+
+  // Swap Styles
+  inputBox: { backgroundColor: "#fff0f5", borderRadius: "16px", padding: "16px", border: "1px solid #ffe4e1", transition: "all 0.2s ease" },
+  inputLabel: { color: "#b03060", fontSize: "14px", marginBottom: "10px", fontWeight: "600" },
+  inputRow: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  inputField: { backgroundColor: "transparent", border: "none", color: "#333", fontSize: "28px", outline: "none", width: "60%", fontWeight: "bold" },
+  tokenButton: { display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#ffffff", border: "1px solid #ffb6c1", color: "#333", padding: "8px 16px", borderRadius: "20px", fontSize: "16px", fontWeight: "bold", cursor: "pointer" },
+  balanceText: { color: "#c71585", fontSize: "12px", textAlign: "right", marginTop: "8px", fontWeight: "600" },
+  arrowContainer: { display: "flex", justifyContent: "center", margin: "-10px 0", position: "relative", zIndex: 1 },
+  arrowIcon: { backgroundColor: "#ff1493", color: "#ffffff", width: "36px", height: "36px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "10px", border: "4px solid #ffffff", cursor: "pointer", fontWeight: "bold", fontSize: "18px" },
+  actionButton: { width: "100%", backgroundColor: "#ff1493", color: "#ffffff", padding: "16px", borderRadius: "16px", fontSize: "18px", fontWeight: "bold", marginTop: "20px", cursor: "pointer", border: "none" },
   
-  // Modal styles
+  // Modal Styles
   modalOverlay: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(255, 182, 193, 0.4)", backdropFilter: "blur(4px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 },
   modalContent: { backgroundColor: "#ffffff", width: "90%", maxWidth: "400px", borderRadius: "24px", padding: "20px", boxShadow: "0 10px 50px rgba(255, 20, 147, 0.3)", border: "1px solid #ffb6c1" },
   modalHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" },
@@ -62,82 +62,23 @@ const tokenList = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("Swap");
+  const [activeTab, setActiveTab] = useState("Dashboard");
   const [walletAddress, setWalletAddress] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [balances, setBalances] = useState({ ARC: "0.00", DBAY: "0.00", ARROW: "0.00", USDC: "0.00" });
   const [isClaiming, setIsClaiming] = useState(false);
 
-  // --- STATE KHUSUS UNTUK MESIN SWAP ---
-  const [topToken, setTopToken] = useState(tokenList[3]); // Default Pay: USDC
-  const [bottomToken, setBottomToken] = useState(tokenList[1]); // Default Receive: DBAY
+  // Swap States
+  const [topToken, setTopToken] = useState(tokenList[3]); 
+  const [bottomToken, setBottomToken] = useState(tokenList[1]); 
   const [payAmount, setPayAmount] = useState("");
   const [receiveAmount, setReceiveAmount] = useState("");
   const [isSwapping, setIsSwapping] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectingFor, setSelectingFor] = useState(null);
 
-  // Angka tukar fiktif (Contoh: 1 Koin Atas = 2.5 Koin Bawah)
-  // Di dunia nyata, angka ini didapat dari Smart Contract Liquidity Pool
   const EXCHANGE_RATE = 2.5; 
 
-  const handlePayChange = (e) => {
-    const value = e.target.value;
-    setPayAmount(value);
-    // Kalkulator Otomatis!
-    if (value && parseFloat(value) > 0) {
-      setReceiveAmount((parseFloat(value) * EXCHANGE_RATE).toFixed(4));
-    } else {
-      setReceiveAmount("");
-    }
-  };
-
-  const handleFlipTokens = () => {
-    setTopToken(bottomToken);
-    setBottomToken(topToken);
-    setPayAmount("");
-    setReceiveAmount("");
-  };
-
-  const openTokenModal = (side) => {
-    setSelectingFor(side);
-    setIsModalOpen(true);
-  };
-
-  const handleSelectToken = (token) => {
-    if (selectingFor === "top") setTopToken(token);
-    else setBottomToken(token);
-    setIsModalOpen(false);
-    setPayAmount("");
-    setReceiveAmount("");
-  };
-
-  const executeSwap = async () => {
-    if (!walletAddress) return alert("Connect Wallet dulu bosku!");
-    if (!payAmount || parseFloat(payAmount) <= 0) return alert("Masukkan jumlah koin yang mau di-swap!");
-    
-    // Cek saldo (pastikan uangnya cukup)
-    const currentBalance = parseFloat(balances[topToken.symbol].replace(/,/g, ''));
-    if (parseFloat(payAmount) > currentBalance) {
-      return alert(`Saldo ${topToken.symbol} kamu tidak cukup!`);
-    }
-
-    try {
-      setIsSwapping(true);
-      // Animasi pura-pura memproses ke blockchain selama 3 detik
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      alert(`🎉 SWAP SUKSES! (Simulasi)\nKamu menukar ${payAmount} ${topToken.symbol} dan mendapatkan ${receiveAmount} ${bottomToken.symbol}.`);
-      setPayAmount("");
-      setReceiveAmount("");
-    } catch (e) {
-      alert("Swap gagal.");
-    } finally {
-      setIsSwapping(false);
-    }
-  };
-
-  // --- KODE WEB3 (DASHBOARD & FAUCET) TETAP SAMA ---
   const fetchTokenBalance = async (tokenAddress, wallet) => {
     if (!tokenAddress.startsWith("0x")) return "0.00";
     try {
@@ -167,7 +108,51 @@ export default function App() {
     } else { alert("Buka di browser dompet MetaMask/OKX Wallet kamu ya!"); }
   };
 
-  const handleClaimFaucet = async () => { /* Logika Instan Faucet tetap aman di sini */ };
+  // 🔥 FUNGSI FAUCET KEMBALI HIDUP! 🔥
+  const handleClaimFaucet = async () => {
+    if (!walletAddress) return alert("Connect Wallet dulu bosku!");
+    if (!USDC_ADDRESS.startsWith("0x")) return alert("Alamat USDC belum dipasang di kodingan!");
+    
+    try {
+      setIsClaiming(true);
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+      
+      // Kirim sinyal ke fungsi claimFaucet di Smart Contract
+      await window.ethereum.request({
+        method: "eth_sendTransaction",
+        params: [{
+          from: accounts[0],
+          to: USDC_ADDRESS,
+          data: "0xbe6d055a" 
+        }]
+      });
+      
+      alert("Transaksi Faucet sukses dikirim ke Blockchain! Refresh halaman atau konek ulang dompet setelah 5 detik.");
+    } catch (error) {
+      alert("Kamu membatalkan transaksi Faucet.");
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
+  const handlePayChange = (e) => {
+    const value = e.target.value;
+    setPayAmount(value);
+    if (value && parseFloat(value) > 0) setReceiveAmount((parseFloat(value) * EXCHANGE_RATE).toFixed(4));
+    else setReceiveAmount("");
+  };
+
+  const handleFlipTokens = () => { setTopToken(bottomToken); setBottomToken(topToken); setPayAmount(""); setReceiveAmount(""); };
+  const openTokenModal = (side) => { setSelectingFor(side); setIsModalOpen(true); };
+  const handleSelectToken = (token) => {
+    if (selectingFor === "top") setTopToken(token); else setBottomToken(token);
+    setIsModalOpen(false); setPayAmount(""); setReceiveAmount("");
+  };
+
+  const executeSwap = async () => {
+    if (!walletAddress) return alert("Connect Wallet dulu!");
+    alert("Swap sedang dihubungkan ke Brankas Smart Contract...");
+  };
 
   return (
     <>
@@ -177,8 +162,6 @@ export default function App() {
         .blinking-dot { animation: blinkAnim 1.2s infinite ease-in-out; }
         .neon-button { animation: neonPulse 2s infinite ease-in-out; transition: all 0.3s ease; }
         .neon-button:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .flip-arrow { transition: transform 0.3s ease; }
-        .flip-arrow:active { transform: rotate(180deg); }
       `}</style>
       
       <div style={styles.container}>
@@ -196,17 +179,49 @@ export default function App() {
         <div style={styles.navContainer}>
           <div style={activeTab === "Dashboard" ? styles.activeTab : styles.inactiveTab} onClick={() => setActiveTab("Dashboard")}>Dashboard</div>
           <div style={activeTab === "Swap" ? styles.activeTab : styles.inactiveTab} onClick={() => setActiveTab("Swap")}>Swap</div>
-          <div style={activeTab === "Earn" ? styles.activeTab : styles.inactiveTab} onClick={() => setActiveTab("Earn")}>Earn</div>
         </div>
 
         <main style={styles.mainArea}>
           <div style={styles.card}>
             <div style={styles.cardHeader}>
               <h2 style={styles.cardTitle}>{activeTab}</h2>
-              {activeTab === "Swap" && <span style={styles.settingsIcon}>⚙️</span>}
             </div>
 
-            {/* --- HALAMAN SWAP YANG SUDAH HIDUP --- */}
+            {/* --- HALAMAN DASHBOARD (ADA FAUCET-NYA!) --- */}
+            {activeTab === "Dashboard" && (
+              <>
+                {!walletAddress ? (
+                  <div style={{ textAlign: "center", padding: "40px 0", color: "#888" }}><p>Connect dompetmu dulu bosku.</p></div>
+                ) : (
+                  <>
+                    <div style={styles.sectionTitle}>Real-Time Assets</div>
+                    <div style={styles.assetRow}>
+                      <div style={styles.assetInfo}>
+                        <span style={{ fontSize: "24px" }}>💠</span>
+                        <div><div style={styles.assetSymbol}>DBAY</div><div style={styles.assetNameMini}>Dbay Modern</div></div>
+                      </div>
+                      <div style={styles.assetBalance}>{balances.DBAY}</div>
+                    </div>
+                    
+                    {/* TOMBOL FAUCET DI SINI */}
+                    <div style={{...styles.assetRow, borderColor: "#32cd32"}}>
+                      <div style={styles.assetInfo}>
+                        <span style={{ display: "flex", width: "24px" }}><img src={usdcLogo} style={{width: "24px", height: "24px"}} alt="USDC"/></span>
+                        <div><div style={styles.assetSymbol}>USDC</div><div style={styles.assetNameMini}>Testnet USD</div></div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={styles.assetBalance}>{balances.USDC}</div>
+                        <button style={styles.faucetButton} onClick={handleClaimFaucet} disabled={isClaiming}>
+                          {isClaiming ? "⏳..." : "+ Claim"}
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* --- HALAMAN SWAP --- */}
             {activeTab === "Swap" && (
               <>
                 <div style={styles.inputBox}>
@@ -214,9 +229,6 @@ export default function App() {
                   <div style={styles.inputRow}>
                     <input type="number" placeholder="0.0" style={styles.inputField} value={payAmount} onChange={handlePayChange} />
                     <button style={styles.tokenButton} onClick={() => openTokenModal("top")}>
-                      <span style={{display: "flex", width: "18px", justifyContent: "center"}}>
-                        {topToken.iconImg ? <img src={topToken.iconImg} style={{width:"18px", height:"18px"}} alt=""/> : topToken.icon}
-                      </span> 
                       {topToken.symbol} ⏷
                     </button>
                   </div>
@@ -224,7 +236,7 @@ export default function App() {
                 </div>
 
                 <div style={styles.arrowContainer}>
-                  <div style={styles.arrowIcon} className="flip-arrow" onClick={handleFlipTokens}>↓</div>
+                  <div style={styles.arrowIcon} onClick={handleFlipTokens}>↓</div>
                 </div>
 
                 <div style={styles.inputBox}>
@@ -232,58 +244,36 @@ export default function App() {
                   <div style={styles.inputRow}>
                     <input type="number" placeholder="0.0" style={styles.inputField} value={receiveAmount} readOnly />
                     <button style={styles.tokenButton} onClick={() => openTokenModal("bottom")}>
-                      <span style={{display: "flex", width: "18px", justifyContent: "center"}}>
-                         {bottomToken.iconImg ? <img src={bottomToken.iconImg} style={{width:"18px", height:"18px"}} alt=""/> : bottomToken.icon}
-                      </span> 
                       {bottomToken.symbol} ⏷
                     </button>
                   </div>
                   <div style={styles.balanceText}>Balance: {balances[bottomToken.symbol]}</div>
                 </div>
 
-                <div style={{fontSize: "12px", color: "#c71585", textAlign: "right", marginTop: "12px", fontWeight: "bold"}}>
-                  Rate: 1 {topToken.symbol} = {EXCHANGE_RATE} {bottomToken.symbol}
-                </div>
-
                 <button 
                   style={{...styles.actionButton, backgroundColor: (!walletAddress || !payAmount) ? "#ffb6c1" : "#ff1493"}} 
-                  className={(!walletAddress || !payAmount) ? "" : "neon-button"} 
                   onClick={!walletAddress ? handleConnectWallet : executeSwap}
-                  disabled={isSwapping}
                 >
-                  {!walletAddress ? "Connect Wallet to Swap" : (isSwapping ? "🔄 Processing Swap..." : "Swap Now")}
+                  {!walletAddress ? "Connect Wallet to Swap" : "Swap Now"}
                 </button>
               </>
-            )}
-
-            {activeTab === "Dashboard" && (
-               <div style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>Dashboard masih aman, fitur Swap yang kita fokuskan.</div>
-            )}
-            {activeTab === "Earn" && (
-               <div style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>Fitur Staking sedang antre...</div>
             )}
           </div>
         </main>
       </div>
 
-      {/* --- MODAL PILIH KOIN --- */}
+      {/* MODAL */}
       {isModalOpen && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
             <div style={styles.modalHeader}>
-              <h3 style={{ margin: 0, color: "#333", fontWeight: "900" }}>Select a token</h3>
+              <h3 style={{ margin: 0 }}>Select a token</h3>
               <button style={styles.closeButton} onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {tokenList.map((token, index) => (
                 <div key={index} style={styles.tokenListItem} onClick={() => handleSelectToken(token)}>
-                  <span style={{ fontSize: "28px", display: "flex", justifyContent: "center", width: "32px" }}>
-                    {token.iconImg ? <img src={token.iconImg} style={{width: "28px", height: "28px"}} alt=""/> : token.icon}
-                  </span>
-                  <div>
-                    <div style={{ fontWeight: "900", color: "#333", fontSize: "16px" }}>{token.symbol}</div>
-                    <div style={{ fontSize: "12px", color: "#888" }}>{token.name}</div>
-                  </div>
+                  <div style={{ fontWeight: "900", fontSize: "16px" }}>{token.symbol}</div>
                 </div>
               ))}
             </div>
